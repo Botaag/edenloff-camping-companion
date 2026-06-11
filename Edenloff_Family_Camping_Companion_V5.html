@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Edenloff Family Camping Companion V5</title>
+<style>
+body{font-family:-apple-system,sans-serif;margin:0;background:#eef2f5}
+header{background:#1f4f82;color:#fff;padding:20px;text-align:center}
+.card{background:#fff;margin:12px;border-radius:14px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+details{margin:8px 0}
+label{display:block;padding:4px 0}
+textarea,input{width:100%;box-sizing:border-box;padding:8px;margin:4px 0}
+.progress{height:24px;background:#ddd;border-radius:20px;overflow:hidden}
+.bar{height:100%;background:#2f7d32;width:0%}
+</style>
+</head>
+<body>
+<header>
+<h1>🦅 Edenloff Family Camping Companion V5</h1>
+<p>Jay Flight 172DBH</p>
+</header>
+
+<div class="card">
+<h2>Trip Progress</h2>
+<div class="progress"><div id="bar" class="bar"></div></div>
+<p id="pct">0% Complete</p>
+</div>
+
+<div class="card"><h2>Tank Tracker</h2>
+<input id="water" placeholder="Fresh Water %">
+<input id="battery" placeholder="Battery %">
+<input id="propane" placeholder="Propane %">
+</div>
+
+<div class="card"><h2>Camping Checklists</h2><div id="lists"></div></div>
+
+<div class="card"><h2>Grocery List</h2><textarea id="grocery" rows="6"></textarea></div>
+<div class="card"><h2>Meal Planner</h2><textarea id="meals" rows="6"></textarea></div>
+
+<div class="card"><h2>Family Packing Lists</h2>
+<textarea id="dad" rows="3" placeholder="Dad"></textarea>
+<textarea id="mom" rows="3" placeholder="Mom"></textarea>
+<textarea id="cooper" rows="3" placeholder="Cooper"></textarea>
+<textarea id="shared" rows="3" placeholder="Shared Gear"></textarea>
+</div>
+
+<div class="card"><h2>Maintenance / Winterization</h2>
+<textarea id="maint" rows="8"></textarea></div>
+
+<div class="card"><h2>Fuel & Travel Log</h2>
+<textarea id="fuel" rows="6"></textarea></div>
+
+<div class="card"><h2>Campground Journal</h2>
+<textarea id="journal" rows="8"></textarea></div>
+
+<div class="card"><h2>Emergency Contacts</h2>
+<textarea id="emergency" rows="5"></textarea></div>
+
+<script>
+const sections={
+"Pre-Trip Exterior":["Tires","Lights","Hitch","Chains","Battery","Propane","Awning","Walk Around"],
+"Pre-Trip Interior":["Food","Clothes","Cabinets","Windows","Refrigerator","Keys"],
+"Arrival Exterior":["Level","Power","Water","Awning","Chairs"],
+"Arrival Interior":["Beds","Thermostat","Fridge","Water Check"],
+"Departure Exterior":["Dump Tanks","Disconnect Water","Disconnect Power","Raise Stabilizers","Hitch"],
+"Departure Interior":["Trash","Secure Cabinets","Lock Door"],
+"Post Trip Exterior":["Wash Camper","Inspect Roof","Refill Propane"],
+"Post Trip Interior":["Laundry","Clean Fridge","Restock"],
+"Winterization":["Drain Water","Bypass Heater","Add Antifreeze","Battery Storage"],
+"Dewinterization":["Flush Lines","Sanitize System","Check Seals","Test Appliances"]
+};
+for (const [name,items] of Object.entries(sections)){
+ let d=document.createElement('details');
+ d.innerHTML='<summary><b>'+name+'</b></summary>';
+ items.forEach((it,i)=>{
+  let id=name+i;
+  let c=localStorage.getItem(id)==='true'?'checked':'';
+  d.innerHTML+=`<label><input class="chk" type="checkbox" ${c}
+ onchange="localStorage.setItem('${id}',this.checked);updateP()"> ${it}</label>`;
+ });
+ document.getElementById('lists').appendChild(d);
+}
+function updateP(){
+ let t=document.querySelectorAll('.chk').length;
+ let d=document.querySelectorAll('.chk:checked').length;
+ let p=Math.round(d/t*100)||0;
+ document.getElementById('bar').style.width=p+'%';
+ document.getElementById('pct').innerText=p+'% Complete';
+}
+updateP();
+['water','battery','propane','grocery','meals','dad','mom','cooper','shared','maint','fuel','journal','emergency'].forEach(id=>{
+ let e=document.getElementById(id);
+ e.value=localStorage.getItem(id)||'';
+ e.oninput=()=>localStorage.setItem(id,e.value);
+});
+</script>
+</body></html>
